@@ -7,20 +7,29 @@ class RateController extends GetxController {
   var rates = <Map<String, dynamic>>[].obs;
   Timer? _timer;
 
-  final String apiUrl = '';
+  final String apiUrl =
+      'https://mocki.io/v1/cecbfe8b-7758-48b7-94b4-bde6e4cfdf3d';
 
   Future<void> fetchRates() async {
     try {
       final uri = Uri.parse(apiUrl);
       final response = await http.get(uri).timeout(const Duration(seconds: 8));
+
+      print("API called: $apiUrl");
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data != null && data['rates'] is List) {
           rates.value = List<Map<String, dynamic>>.from(data['rates']);
+          print("Fetched rates: ${rates.length}");
         }
-      } else {}
+      } else {
+        print("API returned error code: ${response.statusCode}");
+      }
     } catch (e) {
-      print("The error is ${e}");
+      print("Error fetching rates: $e");
     }
   }
 
